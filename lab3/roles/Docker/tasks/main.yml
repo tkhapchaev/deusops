@@ -1,0 +1,27 @@
+---
+- name: Install required system packages
+  apt:
+    pkg:
+      - curl
+      - git
+      - lynx
+      - python3-pip
+      - apt-transport-https
+    state: latest
+    update_cache: true
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: "{{ docker_apt_key_url }}"
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: "{{ docker_apt_repository }}"
+    state: present
+
+- name: Update apt and install Docker package
+  apt:
+    name: "{{ docker_package }}"
+    state: latest
+    update_cache: true

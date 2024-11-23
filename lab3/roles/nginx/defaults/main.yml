@@ -1,0 +1,4 @@
+---
+nginx_site_template: "nginx.conf.j2"
+nginx_site_available: "/etc/nginx/sites-available/default"
+nginx_site_enabled: "/etc/nginx/sites-enabled/default"

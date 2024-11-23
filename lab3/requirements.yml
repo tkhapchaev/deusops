@@ -1,0 +1,6 @@
+---
+- src: git+https://github.com/tkhapchaev/deusops-role-docker.git
+  name: Docker
+
+- src: git+https://github.com/tkhapchaev/deusops-role-nginx.git
+  name: nginx

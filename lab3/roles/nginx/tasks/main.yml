@@ -1,0 +1,24 @@
+---
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Copy nginx site configuration
+  template:
+    src: "{{ nginx_site_template }}"
+    dest: "{{ nginx_site_available }}"
+  notify: Restart nginx
+
+- name: Enable nginx site
+  file:
+    src: "{{ nginx_site_available }}"
+    dest: "{{ nginx_site_enabled }}"
+    state: link
+
+- name: Ensure nginx is running
+  service:
+    name: nginx
+    state: started
+    enabled: true
