@@ -2,7 +2,7 @@
   become: true
   tasks:
   
-  - name: Install required system packages
+  - name: install required packages
     apt:
       pkg:
         - curl
@@ -12,48 +12,48 @@
       state: latest
       update_cache: true
 
-  - name: Install Docker SDK for Python
+  - name: install docker SDK for python
     pip:
       name: docker
       state: present
       executable: pip3
 
-  - name: Add Docker GPG apt Key
+  - name: add docker apt Key
     apt_key:
       url: https://download.docker.com/linux/ubuntu/gpg
       state: present
 
-  - name: Add Docker Repository
+  - name: add docker repository
     apt_repository:
       repo: deb https://download.docker.com/linux/ubuntu focal stable
       state: present
 
-  - name: Update apt and install docker-ce
+  - name: update apt and install docker-ce
     apt:
       name: docker-ce
       state: latest
       update_cache: true
 
-  - name: Add current user to the docker group (optional)
+  - name: add current user to the docker group (optional)
     user:
       name: "{{ ansible_user }}"
       groups: docker
       append: yes
 
-  - name: Clone github repo
+  - name: clone github repo
     git:
       repo: 'https://github.com/mdn/django-locallibrary-tutorial.git'
       dest: /home/{{ ansible_user }}/app
       version: main
       update: yes
 
-  - name: Pull the Django Docker image
+  - name: pull the Django docker image
     docker_image:
       name: timurbabs/django
       tag: latest
       source: pull
 
-  - name: Run the Django container
+  - name: run the django container
     docker_container:
       name: django_app
       image: timurbabs/django:latest

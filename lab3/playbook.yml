@@ -6,13 +6,13 @@
     - Docker
 
   tasks:
-    - name: Pull the Django Docker image
+    - name: pull django docker image
       docker_image:
         name: timurbabs/django
         tag: latest
         source: pull
 
-    - name: Run the Django container
+    - name: run django container
       docker_container:
         name: django_app
         image: timurbabs/django:latest

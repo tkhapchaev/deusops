@@ -1,23 +1,23 @@
 ---
-- name: Install nginx
+- name: install nginx
   apt:
     name: nginx
     state: present
     update_cache: yes
 
-- name: Copy nginx site configuration
+- name: copy nginx configuration
   template:
-    src: "{{ nginx_site_template }}"
-    dest: "{{ nginx_site_available }}"
-  notify: Restart nginx
+    src: "{{ nginx_template }}"
+    dest: "{{ nginx_host_is_available }}"
+  notify: restart nginx
 
-- name: Enable nginx site
+- name: enable nginx host
   file:
-    src: "{{ nginx_site_available }}"
-    dest: "{{ nginx_site_enabled }}"
+    src: "{{ nginx_host_is_available }}"
+    dest: "{{ nginx_host_is_enabled }}"
     state: link
 
-- name: Ensure nginx is running
+- name: ensure nginx is running
   service:
     name: nginx
     state: started

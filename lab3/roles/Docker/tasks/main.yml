@@ -1,5 +1,5 @@
 ---
-- name: Install required system packages
+- name: install required packages
   apt:
     pkg:
       - curl
@@ -10,17 +10,17 @@
     state: latest
     update_cache: true
 
-- name: Add Docker GPG apt Key
+- name: add docker apt Key
   apt_key:
-    url: "{{ docker_apt_key_url }}"
+    url: "{{ docker_apt_key }}"
     state: present
 
-- name: Add Docker Repository
+- name: add docker repository
   apt_repository:
     repo: "{{ docker_apt_repository }}"
     state: present
 
-- name: Update apt and install Docker package
+- name: install docker package
   apt:
     name: "{{ docker_package }}"
     state: latest
