@@ -9,6 +9,8 @@
   template:
     src: "{{ nginx_template }}"
     dest: "{{ nginx_host_is_available }}"
+    validate: "/usr/sbin/nginx -t -c %s"
+    backup: yes
   notify: restart nginx
 
 - name: enable nginx host
