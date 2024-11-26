@@ -11,7 +11,7 @@
     dest: "{{ nginx_host_is_available }}"
     validate: "/usr/sbin/nginx -t -c %s"
     backup: yes
-  notify: restart nginx
+  notify: reload nginx
 
 - name: enable nginx host
   file:
