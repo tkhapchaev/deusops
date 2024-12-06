@@ -1,0 +1,3 @@
+---
+- src: git+https://github.com/tkhapchaev/deusops-role-openvpn.git
+  name: openvpn

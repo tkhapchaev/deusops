@@ -1,0 +1,22 @@
+port {{ openvpn_server_vars_port }}
+proto {{ openvpn_server_vars_proto }}
+dev tun
+ca {{ openvpn_server_vars_ca }}
+cert {{ openvpn_server_vars_cert }}
+key {{ openvpn_server_vars_key }}
+dh {{ openvpn_server_vars_dh }}
+server 10.8.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+push "redirect-gateway def1 bypass-dhcp"
+keepalive 10 120
+tls-crypt {{ openvpn_server_vars_tls_crypt }}
+cipher {{ openvpn_server_vars_cipher }}
+auth {{ openvpn_server_vars_auth }} 
+user {{ openvpn_server_vars_user }}
+group {{ openvpn_server_vars_group }}
+persist-key
+persist-tun
+status openvpn-status.log
+log-append  /var/log/openvpn/openvpn.log
+verb 3
+explicit-exit-notify 1

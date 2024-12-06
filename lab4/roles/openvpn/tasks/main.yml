@@ -1,0 +1,222 @@
+---
+- name: install required packages (present)
+  ansible.builtin.apt:
+    name:
+      - "{{ openvpn_easy_rsa_package_name }}"
+      - "{{ openvpn_package_name }}"
+    state: present
+  when: not openvpn_required_packages_state_latest
+
+- name: install required packages (latest)
+  ansible.builtin.apt:
+    name:
+      - "{{ openvpn_easy_rsa_package_name }}"
+      - "{{ openvpn_package_name }}"
+    state: latest
+  when: openvpn_required_packages_state_latest
+
+- name: create directory for easy-rsa
+  ansible.builtin.file:
+    path: "{{ openvpn_easy_rsa_dir }}"
+    state: "directory"
+    mode: "0700"
+
+- name: add variables for server certificate authority
+  ansible.builtin.template:
+    src: "{{ openvpn_easy_rsa_vars_template }}"
+    dest: "{{ openvpn_easy_rsa_dir }}/vars"
+
+- name: init-pki
+  ansible.builtin.command:
+    cmd: "{{ openvpn_easy_rsa_binary }}/easyrsa init-pki"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki"
+
+- name: create authoruty certificate and key
+  ansible.builtin.command:
+    cmd: "{{ openvpn_easy_rsa_binary }}/easyrsa build-ca nopass"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki/ca.crt"
+  environment:
+    EASYRSA_BATCH: "yes"
+
+- name: add variables for server certificate authority
+  ansible.builtin.template:
+    src: "{{ openvpn_easy_rsa_vars_template }}"
+    dest: "{{ openvpn_easy_rsa_dir }}/vars"
+
+- name: init-pki
+  ansible.builtin.command:
+    cmd: "{{ openvpn_easy_rsa_binary }}/easyrsa init-pki"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki"
+
+- name: create Diffie-Hellman keys
+  ansible.builtin.command:
+    cmd: "{{ openvpn_easy_rsa_binary }}/easyrsa gen-dh"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki/dh.pem"
+
+- name: create restricted certificates list
+  ansible.builtin.command:
+    cmd: "{{ openvpn_easy_rsa_binary }}/easyrsa gen-crl"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki/crl.pem"
+
+- name: create a static key
+  ansible.builtin.command:
+    cmd: "openvpn --genkey --secret {{ openvpn_easy_rsa_dir }}/pki/ta.key"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki/ta.key"
+
+- name: create request for sign server certificate
+  ansible.builtin.command:
+    cmd: "{{ openvpn_easy_rsa_binary }}/easyrsa gen-req {{ openvpn_server_common_name }} nopass"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki/reqs/{{ openvpn_server_common_name }}.req"
+  environment:
+    EASYRSA_BATCH: "yes"
+
+- name: copy request certificate for signing
+  ansible.builtin.copy:
+    src: "{{ openvpn_easy_rsa_dir }}/pki/reqs/{{ openvpn_server_common_name }}.req"
+    dest: "/tmp/{{ openvpn_server_common_name }}.req"
+    remote_src: "yes"
+
+- name: sign the request
+  ansible.builtin.command:
+    cmd: "{{ openvpn_easy_rsa_binary }}/easyrsa sign-req server {{ openvpn_server_common_name }}"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki/issued/{{ openvpn_server_common_name }}.crt"
+  environment:
+    EASYRSA_BATCH: "yes"
+
+- name: copy signed certificate and ca.crt
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/tmp/{{ item | basename}}"
+    remote_src: "yes"
+  loop:
+    - "{{ openvpn_easy_rsa_dir }}/pki/issued/{{ openvpn_server_common_name }}.crt"
+    - "{{ openvpn_easy_rsa_dir }}/pki/ca.crt"
+
+- name: copy files to openvpn directory
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ openvpn_dir }}/{{ item | basename }}"
+    mode: "0640"
+    remote_src: "yes"
+  loop:
+   - "{{ openvpn_easy_rsa_dir }}/pki/ta.key"
+   - "{{ openvpn_easy_rsa_dir }}/pki/dh.pem"
+   - "{{ openvpn_easy_rsa_dir }}/pki/crl.pem"
+   - "{{ openvpn_easy_rsa_dir }}/pki/private/{{ openvpn_server_common_name }}.key"
+   - "/tmp/{{ openvpn_server_common_name }}.crt"
+   - "/tmp/ca.crt"
+
+- name: create client configurations directory
+  ansible.builtin.file:
+    path: "{{ openvpn_client_configs_dir }}/keys"
+    state: directory
+    mode: "0755"
+
+- name: configurations directory change mod
+  ansible.builtin.file:
+    path: "{{ openvpn_client_configs_dir }}"
+    mode: "0700"
+
+- name: request for signing client certificate
+  ansible.builtin.command:
+    cmd: "{{ openvpn_easy_rsa_binary }}/easyrsa gen-req {{ openvpn_client_common_name }} nopass"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki/private/{{ openvpn_client_common_name }}.key"
+  environment:
+    EASYRSA_BATCH: "yes"
+
+- name: copy files to openvpn client configurations directory
+  ansible.builtin.copy:
+    src: "{{ openvpn_easy_rsa_dir }}/pki/private/{{ openvpn_client_common_name }}.key"
+    dest: "{{ openvpn_client_configs_dir }}/keys/{{ openvpn_client_common_name }}.key"
+    remote_src: "yes"
+
+- name: copy request certificate for signing
+  ansible.builtin.copy:
+    src: "{{ openvpn_easy_rsa_dir }}/pki/reqs/{{ openvpn_client_common_name }}.req"
+    dest: "/tmp/{{ openvpn_client_common_name }}.req"
+    remote_src: "yes"
+
+- name: sign the request
+  ansible.builtin.command:
+    cmd: "{{ openvpn_easy_rsa_binary }}/easyrsa sign-req client {{ openvpn_client_common_name }}"
+    chdir: "{{ openvpn_easy_rsa_dir }}"
+    creates: "{{ openvpn_easy_rsa_dir }}/pki/issued/{{ openvpn_client_common_name }}.crt"
+  environment:
+    EASYRSA_BATCH: "yes"
+
+- name: copy signed certificate and ca.crt
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/tmp/{{ item | basename }}"
+    remote_src: "yes"
+  loop:
+    - "{{ openvpn_easy_rsa_dir }}/pki/issued/{{ openvpn_client_common_name }}.crt"
+
+- name: copy files to openvpn client configurations directory
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ openvpn_client_configs_dir }}/keys/{{ item | basename }}"
+    mode: "0640"
+    remote_src: "true"
+  loop:
+   - "/tmp/{{ openvpn_client_common_name }}.crt"
+   - "{{ openvpn_easy_rsa_dir }}/pki/ta.key"
+   - "{{ openvpn_easy_rsa_dir }}/pki/ca.crt"
+
+- name: copy configuration
+  ansible.builtin.template:
+    src: "{{ openvpn_server_template }}"
+    dest: "{{ openvpn_dir }}/server.conf"
+  notify:
+    - start openvpn
+
+- name: configuration IP forwarding
+  ansible.builtin.sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    state: present
+    reload: yes
+
+- name: create directory
+  ansible.builtin.file:
+    path: "{{ openvpn_client_configs_dir }}/files"
+    state: directory
+
+- name: copy configuration
+  ansible.builtin.template:
+    src: "{{ openvpn_client_template }}"
+    dest: "{{ openvpn_client_configs_dir }}/base.ovpn"
+
+- name: create client .ovpn file
+  ansible.builtin.shell: "cat {{ openvpn_client_configs_dir }}/base.ovpn \
+    <(echo -e '\n') \
+    <(echo -e '<ca>') \
+    {{ openvpn_client_configs_dir }}/keys/ca.crt \
+    <(echo -e '</ca>\n<cert>') \
+    {{ openvpn_client_configs_dir }}/keys/{{ openvpn_client_common_name }}.crt \
+    <(echo -e '</cert>\n<key>') \
+    {{ openvpn_client_configs_dir }}/keys/{{ openvpn_client_common_name }}.key \
+    <(echo -e '</key>\n<tls-crypt>') \
+    {{ openvpn_client_configs_dir }}/keys/ta.key \
+    <(echo -e '</tls-crypt>') \
+    > {{ openvpn_client_configs_dir }}/files/{{ openvpn_client_common_name }}.ovpn"
+  args:
+    chdir: "{{ openvpn_client_configs_dir }}/files/"
+    executable: /bin/bash
+
+- name: fetch client configuration
+  ansible.builtin.fetch:
+    src: "{{ openvpn_client_configs_dir }}/files/{{ openvpn_client_common_name }}.ovpn"
+    dest: "{{ playbook_dir }}/{{ inventory_hostname }}-{{ openvpn_client_common_name }}.ovpn"
+    flat: true
+  notify:
+    - start openvpn

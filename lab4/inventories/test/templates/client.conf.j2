@@ -1,0 +1,13 @@
+client
+dev tun
+proto {{ openvpn_client_vars_proto }}
+remote {{ openvpn_client_vars_remote }} {{ openvpn_client_vars_remote_port }}
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+remote-cert-tls server
+cipher {{ openvpn_client_vars_cipher }}
+auth {{ openvpn_client_vars_auth }}
+verb 3
+{{ openvpn_client_vars_extra }}

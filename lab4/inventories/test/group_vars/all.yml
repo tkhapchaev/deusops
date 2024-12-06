@@ -1,0 +1,29 @@
+openvpn_easy_rsa_vars_EASYRSA_REQ_COUNTRY: "RU"
+openvpn_easy_rsa_vars_EASYRSA_REQ_PROVINCE: "Saint-Petersburg"
+openvpn_easy_rsa_vars_EASYRSA_REQ_CITY: "Saint-Petersburg"
+openvpn_easy_rsa_vars_EASYRSA_REQ_ORG: "DeusOps"
+openvpn_easy_rsa_vars_EASYRSA_REQ_EMAIL: "example@gmail.com"
+openvpn_easy_rsa_vars_EASYRSA_REQ_OU: "community"
+openvpn_easy_rsa_vars_EASYRSA_ALGO: "ec"
+openvpn_easy_rsa_vars_EASYRSA_DIGEST: "sha512"
+
+openvpn_server_vars_ca: "ca.crt"
+openvpn_server_vars_cert: "{{ openvpn_server_common_name }}.crt"
+openvpn_server_vars_key: "{{ openvpn_server_common_name }}.key"
+openvpn_server_vars_port: "1194"
+openvpn_server_vars_proto: "udp4"
+openvpn_server_vars_tls_crypt: "ta.key"
+openvpn_server_vars_cipher: "AES-256-GCM"
+openvpn_server_vars_auth: "SHA256"
+openvpn_server_vars_dh: "none"
+openvpn_server_vars_user: "nobody"
+openvpn_server_vars_group: "nogroup"
+
+openvpn_client_vars_remote: "127.0.0.1"
+openvpn_client_vars_remote_port: "1194"
+openvpn_client_vars_proto: "udp4"
+openvpn_client_vars_cipher: "AES-256-GCM"
+openvpn_client_vars_auth: "SHA256"
+openvpn_client_vars_extra: |
+    key-direction 1
+    script-security 2

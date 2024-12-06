@@ -1,0 +1,5 @@
+---
+- name: start openvpn
+  ansible.builtin.service:
+    name: "{{ openvpn_package_name }}"
+    state: started

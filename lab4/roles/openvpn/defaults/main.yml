@@ -1,0 +1,16 @@
+---
+openvpn_easy_rsa_package_name: easy-rsa
+openvpn_package_name: openvpn
+openvpn_required_packages_state_latest: false
+
+openvpn_easy_rsa_dir: "~/devops/lab4/easy-rsa"
+openvpn_easy_rsa_binary: "/usr/share/easy-rsa"
+openvpn_easy_rsa_vars_template: "~/devops/lab4/inventories/test/templates/easy-rsa.conf.j2"
+
+openvpn_server_common_name: server
+openvpn_dir: "/etc/openvpn/server"
+openvpn_server_template: "~/devops/lab4/inventories/test/templates/server.conf.j2"
+
+openvpn_client_common_name: client
+openvpn_client_configs_dir: "/home/openvpn/configs"
+openvpn_client_template: "~/devops/lab4/inventories/test/templates/client.conf.j2"
