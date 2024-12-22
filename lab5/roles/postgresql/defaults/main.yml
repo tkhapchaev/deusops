@@ -1,0 +1,35 @@
+---
+postgresql_user_name: tkhapchaev
+postgresql_db_name: lab5
+
+postgresql_version: "17"
+postgresql_package: postgresql
+postgresql_common_package: postgresql-common
+
+postgresql_repo_url: "https://apt.postgresql.org/pub/repos/apt"
+postgresql_repo_path: "/usr/share/postgresql-common/pgdg/apt.postgresql.org.sh"
+
+postgresql_key_url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+postgresql_key: "/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc"
+
+postgresql_sources_list: "/etc/apt/sources.list.d/pgdg.list"
+postgresql_data_dir: "/var/lib/postgresql/{{ postgresql_version }}/main"
+
+pg_hba_conf_path: "/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf"
+pg_conf_path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+
+postgresql_master_listen_addresses: '*'
+postgresql_master_wal_level: replica
+postgresql_master_archive_mode: on
+postgresql_master_archive_command: '/bin/true'
+postgresql_master_max_wal_senders: 5
+postgresql_master_hot_standby: on
+
+postgresql_replica_listen_addresses: '*'
+postgresql_replica_wal_level: replica
+postgresql_replica_archive_mode: on
+postgresql_replica_archive_command: '/bin/true'
+postgresql_replica_max_wal_senders: 5
+postgresql_replica_hot_standby: on
+replication_user: postgres
+master_host: 192.168.56.204

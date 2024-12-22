@@ -1,0 +1,4 @@
+---
+- src: git+https://github.com/tkhapchaev/deusops-role-postgresql.git
+  scm: git
+  name: postgresql

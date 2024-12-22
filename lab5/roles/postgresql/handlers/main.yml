@@ -1,0 +1,9 @@
+---
+- name: restart PostgreSQL service
+  shell: |
+    pg_ctlcluster {{ postgresql_version }} main restart
+  args:
+    executable: /bin/bash
+  register: restart_result
+  changed_when: "'server starting' in restart_result.stdout or 'restarted' in restart_result.stdout"
+  failed_when: restart_result.rc != 0 and 'stopped' not in restart_result.stdout

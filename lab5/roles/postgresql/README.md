@@ -1,0 +1,7 @@
+PostgreSQL
+=========
+
+License
+-------
+
+BSD

@@ -1,0 +1,18 @@
+---
+- hosts: app
+  become: yes
+  roles:
+    - role: postgresql
+      tags: app
+
+- hosts: master
+  become: yes
+  roles:
+    - role: postgresql
+      tags: master
+
+- hosts: replica
+  become: yes
+  roles:
+    - role: postgresql
+      tags: replica

@@ -1,0 +1,7 @@
+---
+postgresql_master_listen_addresses: '*'
+postgresql_master_wal_level: replica
+postgresql_master_archive_mode: on
+postgresql_master_archive_command: '/bin/true'
+postgresql_master_max_wal_senders: 5
+postgresql_master_hot_standby: on

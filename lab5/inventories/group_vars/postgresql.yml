@@ -1,0 +1,19 @@
+---
+postgresql_user_name: tkhapchaev
+postgresql_db_name: lab5
+
+postgresql_version: "17"
+postgresql_package: postgresql
+postgresql_common_package: postgresql-common
+
+postgresql_repo_url: "https://apt.postgresql.org/pub/repos/apt"
+postgresql_repo_path: "/usr/share/postgresql-common/pgdg/apt.postgresql.org.sh"
+
+postgresql_key_url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+postgresql_key: "/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc"
+
+postgresql_sources_list: "/etc/apt/sources.list.d/pgdg.list"
+postgresql_data_dir: "/var/lib/postgresql/{{ postgresql_version }}/main"
+
+pg_hba_conf_path: "/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf"
+pg_conf_path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"

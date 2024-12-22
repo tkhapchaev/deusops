@@ -1,0 +1,15 @@
+galaxy_info:
+  author: tkhapchaev
+  description: lab5-postgresql
+  company: itmo
+  license: BSD
+  min_ansible_version: 2.18
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 20.04
+  galaxy_tags:
+    - postgresql
+  role_name: postgresql
+  namespace: itmo
+dependencies: []

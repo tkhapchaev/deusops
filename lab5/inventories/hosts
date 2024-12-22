@@ -1,0 +1,13 @@
+[app]
+srv1 ansible_host=192.168.56.201
+srv2 ansible_host=192.168.56.202
+srv3 ansible_host=192.168.56.203
+
+[db]
+srv4 ansible_host=192.168.56.204
+
+[master]
+srv4 ansible_host=192.168.56.204
+
+[replica]
+srv5 ansible_host=192.168.56.205
