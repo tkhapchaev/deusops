@@ -265,18 +265,22 @@ replication_user: postgres
 master_host: 192.168.56.204
 ```
 
-Запуск playbook:
+Запуск playbook:\
 ![image](https://github.com/user-attachments/assets/b83f2b0c-9b22-4f53-becf-e865fe5de48c)
 
-Molecule тесты для роли проходят успешно:
+Molecule тесты для роли проходят успешно:\
 ![image](https://github.com/user-attachments/assets/47d8f6b1-a19e-4836-86c3-1e09c4271f47)
 
 Streaming-репликация, добавление новых пользователей, баз данных и таблиц также работают успешно.\
-Добавим данные в созданную ранее таблицу test базы данных lab5:
+Добавим данные в созданную ранее таблицу test базы данных lab5:\
 ![image](https://github.com/user-attachments/assets/a9484cfb-9a88-42e2-8251-56ccecda4783)
 
-Все изменения отображаются на replica ноде:
+Все изменения отображаются на replica ноде:\
 ![image](https://github.com/user-attachments/assets/b3eee76f-29b5-4724-a780-c1ee857e6d26)
 
-С replica ноды все транзакции read-only:
+С replica ноды все транзакции read-only:\
 ![image](https://github.com/user-attachments/assets/c69cc533-2ea7-4b8a-8f2d-d1bef8044355)
+
+---
+Хапчаев Тимур Русланович M34071\
+Алейников Иван Витальевич M34071
