@@ -9,7 +9,7 @@ driver:
   name: docker
 
 platforms:
-  - name: master-node
+  - name: master
     image: geerlingguy/docker-ubuntu2004-ansible
     groups:
       - master
@@ -18,7 +18,7 @@ platforms:
     networks:
       - name: postgresql-network
 
-  - name: replica-node
+  - name: replica
     image: geerlingguy/docker-ubuntu2004-ansible
     groups:
       - replica
